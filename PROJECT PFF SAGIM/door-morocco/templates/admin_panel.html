@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel — Door Morocco{% endblock %}
+
+{% block content %}
+<section class="panel">
+
+  <!-- ═══════ HEADER WITH NOTIFICATION BELL ═══════ -->
+  <div class="panel__header">
+    <div>
+      <p class="panel__label">Administration</p>
+      <h1 class="panel__title">Admin <span>Panel</span></h1>
+    </div>
+    <div class="admin-header-actions">
+      <button class="notif-bell" id="notifBell" onclick="document.getElementById('notifDrawer').classList.toggle('open')" aria-label="Notifications">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        {% if stats.unread > 0 %}
+          <span class="notif-bell__badge">{{ stats.unread }}</span>
+        {% endif %}
+      </button>
+      <a href="{{ url_for('logout') }}" class="panel__btn panel__btn--outline">Sign Out</a>
+    </div>
+  </div>
+
+  <!-- ═══════ NOTIFICATION DRAWER ═══════ -->
+  <div class="notif-drawer" id="notifDrawer">
+    <div class="notif-drawer__header">
+      <h3 class="notif-drawer__title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        Recent Activity
+      </h3>
+      {% if stats.unread > 0 %}
+        <form method="POST" action="{{ url_for('mark_notifications_read') }}">
+          <button type="submit" class="notif-drawer__mark-read">Mark all read</button>
+        </form>
+      {% endif %}
+    </div>
+    <div class="notif-drawer__list">
+      {% if notifications %}
+        {% for n in notifications %}
+          <div class="notif-item {{ 'notif-item--unread' if not n.is_read }}">
+            <div class="notif-item__icon notif-item__icon--{{ n.type }}">
+              {% if n.type == 'new_partner' %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              {% elif n.type == 'new_service' %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              {% elif 'approved' in n.type %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              {% else %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              {% endif %}
+            </div>
+            <div class="notif-item__body">
+              <p class="notif-item__title">{{ n.title }}</p>
+              <p class="notif-item__time">{{ n.created_at.strftime('%b %d, %H:%M') if n.created_at else '' }}</p>
+            </div>
+            {% if not n.is_read %}
+              <span class="notif-item__dot"></span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="notif-empty">No activity yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ═══════ STATS ROW ═══════ -->
+  <div class="panel__grid panel__grid--stats">
+    <div class="panel__card panel__card--compact">
+      <div class="panel__card-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div>
+        <span class="panel__card-stat panel__card-stat--gold">{{ stats.partners }}</span>
+        <p class="panel__card-desc">Pending Partners</p>
+      </div>
+    </div>
+    <div class="panel__card panel__card--compact">
+      <div class="panel__card-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
+      <div>
+        <span class="panel__card-stat panel__card-stat--gold">{{ stats.services }}</span>
+        <p class="panel__card-desc">Pending Services</p>
+      </div>
+    </div>
+    <div class="panel__card panel__card--compact">
+      <div class="panel__card-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+      <div>
+        <span class="panel__card-stat panel__card-stat--gold">{{ stats.unread }}</span>
+        <p class="panel__card-desc">Unread Alerts</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ PENDING PARTNERS TABLE ═══════ -->
+  <div class="dash-section">
+    <div class="dash-section__header">
+      <h2 class="dash-section__title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+        </svg>
+        Pending Partners
+      </h2>
+      <span class="dash-section__count">{{ pending_partners|length }} awaiting</span>
+    </div>
+
+    {% if pending_partners %}
+    <div class="lux-table-wrap">
+      <table class="lux-table" id="partnersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pending_partners %}
+          <tr id="partner-row-{{ p.id }}">
+            <td class="lux-table__id">#{{ p.id }}</td>
+            <td class="lux-table__name">{{ p.name }}</td>
+            <td class="lux-table__email">{{ p.email }}</td>
+            <td class="lux-table__date">{{ p.created_at.strftime('%b %d, %Y') if p.created_at else '—' }}</td>
+            <td class="lux-table__actions">
+              <form method="POST" action="{{ url_for('approve_partner', user_id=p.id) }}" style="display:inline">
+                <button type="submit" class="lux-btn lux-btn--approve" title="Approve">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approve
+                </button>
+              </form>
+              <form method="POST" action="{{ url_for('reject_partner', user_id=p.id) }}" style="display:inline" onsubmit="return confirm('Reject this partner? This will remove their account.')">
+                <button type="submit" class="lux-btn lux-btn--reject" title="Reject">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Reject
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="service-empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.25)" stroke-width="1">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <p>No pending partner applications.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ═══════ PENDING SERVICES TABLE ═══════ -->
+  <div class="dash-section">
+    <div class="dash-section__header">
+      <h2 class="dash-section__title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Pending Services
+      </h2>
+      <span class="dash-section__count">{{ pending_services|length }} awaiting</span>
+    </div>
+
+    {% if pending_services %}
+    <div class="lux-table-wrap">
+      <table class="lux-table" id="servicesTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Service</th>
+            <th>Category</th>
+            <th>City</th>
+            <th>Partner</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in pending_services %}
+          <tr id="service-row-{{ s.id }}">
+            <td class="lux-table__id">#{{ s.id }}</td>
+            <td class="lux-table__name">
+              <div class="lux-table__service-cell">
+                {% if s.main_image %}
+                  <img src="{{ s.main_image }}" alt="" class="lux-table__thumb">
+                {% endif %}
+                {{ s.title }}
+              </div>
+            </td>
+            <td><span class="service-item__badge service-item__badge--cat">{{ s.category|capitalize }}</span></td>
+            <td>{{ s.city_name }}</td>
+            <td class="lux-table__email">{{ s.partner_name }}<br><small>{{ s.partner_email }}</small></td>
+            <td class="lux-table__date">{{ s.created_at.strftime('%b %d, %Y') if s.created_at else '—' }}</td>
+            <td class="lux-table__actions">
+              <form method="POST" action="{{ url_for('approve_service', service_id=s.id) }}" style="display:inline">
+                <button type="submit" class="lux-btn lux-btn--approve" title="Approve">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Approve
+                </button>
+              </form>
+              <form method="POST" action="{{ url_for('reject_service', service_id=s.id) }}" style="display:inline" onsubmit="return confirm('Reject and remove this service?')">
+                <button type="submit" class="lux-btn lux-btn--reject" title="Reject">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Reject
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="service-empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.25)" stroke-width="1">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <p>All services have been reviewed. No pending submissions.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Close drawer when clicking outside
+  document.addEventListener('click', (e) => {
+    const drawer = document.getElementById('notifDrawer');
+    const bell = document.getElementById('notifBell');
+    if (drawer && !drawer.contains(e.target) && !bell.contains(e.target)) {
+      drawer.classList.remove('open');
+    }
+  });
+</script>
+{% endblock %}

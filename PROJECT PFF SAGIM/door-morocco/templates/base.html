@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}Door Morocco — Luxury tourism experiences across Morocco.{% endblock %}">
+  <title>{% block title %}Door Morocco{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+  <!-- ═══════ NAVBAR ═══════ -->
+  <nav class="navbar" id="navbar">
+    <a href="/" class="navbar__logo">
+      <div class="navbar__logo-icon">D</div>
+      <div class="navbar__logo-text">Door <span>Morocco</span></div>
+    </a>
+    <ul class="navbar__links">
+      <li><a href="/#cities">Destinations</a></li>
+      <li><a href="#">Experiences</a></li>
+      {% if session.get('user_id') %}
+        {% if session.get('user_role') == 'admin' %}
+          <li><a href="{{ url_for('admin_panel') }}">Admin Panel</a></li>
+        {% else %}
+          <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('logout') }}" class="navbar__cta">Sign Out</a></li>
+      {% else %}
+        <li><a href="{{ url_for('login') }}">Sign In</a></li>
+        <li><a href="{{ url_for('register') }}" class="navbar__cta">Join Us</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <!-- ═══════ FLASH MESSAGES ═══════ -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container" id="flashContainer">
+        {% for category, message in messages %}
+          <div class="flash flash--{{ category }}" id="flash-{{ loop.index }}">
+            <span class="flash__text">{{ message }}</span>
+            <button class="flash__close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer class="footer">
+    <div class="footer__brand">Door <span>Morocco</span></div>
+    <p class="footer__copy">&copy; 2026 Door Morocco. Crafted with excellence.</p>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+  <script>
+    // Navbar scroll
+    const nb = document.getElementById('navbar');
+    if (nb) window.addEventListener('scroll', () => nb.classList.toggle('scrolled', window.scrollY > 60));
+    // Auto-dismiss flash messages
+    setTimeout(() => {
+      document.querySelectorAll('.flash').forEach(f => { f.style.opacity = '0'; setTimeout(() => f.remove(), 500); });
+    }, 5000);
+  </script>
+</body>
+</html>

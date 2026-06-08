@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Door Morocco — Luxury Tourism{% endblock %}
+{% block meta_description %}Door Morocco — Luxury tourism experiences across Morocco's most iconic cities. Hotels, guides, and curated adventures.{% endblock %}
+
+{% block content %}
+  <!-- ═══════ HERO ═══════ -->
+  <section class="hero" id="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__particles" id="heroParticles"></div>
+    <div class="hero__content">
+      <p class="hero__tagline">Luxury Redefined</p>
+      <h1 class="hero__title">Discover the <span>Soul</span> of Morocco</h1>
+      <p class="hero__subtitle">Curated journeys through ancient medinas, golden deserts, and coastal retreats — designed for the discerning traveller.</p>
+      <a href="#cities" class="hero__btn">Explore Destinations</a>
+    </div>
+    <div class="hero__scroll-indicator">
+      <span>Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══════ CITIES SLIDER ═══════ -->
+  <section class="section" id="cities">
+    <div class="gold-line gold-line--top"></div>
+    <div class="section__header">
+      <p class="section__label">Curated Destinations</p>
+      <h2 class="section__title">Iconic Cities</h2>
+      <div class="section__divider"></div>
+    </div>
+
+    <div class="slider">
+      <div class="slider__track-wrapper" id="sliderWrapper">
+        <div class="slider__track" id="sliderTrack">
+          {% for city in cities %}
+          <article class="city-card" id="city-{{ city.id if city.id else loop.index }}">
+            <div class="city-card__image-wrapper">
+              <img
+                class="city-card__image"
+                src="{{ city.image }}"
+                alt="{{ city.name }}"
+                loading="lazy"
+              >
+              <div class="city-card__overlay"></div>
+              <span class="city-card__badge">Explore</span>
+            </div>
+            <div class="city-card__body">
+              <div>
+                <h3 class="city-card__name">{{ city.name }}</h3>
+                <p class="city-card__description">{{ city.description }}</p>
+              </div>
+              <a href="{{ url_for('city_view', city_id=city.id) }}" class="city-card__cta">
+                Discover
+                <span class="city-card__cta-arrow"></span>
+              </a>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="slider__nav">
+        <button class="slider__btn" id="sliderPrev" aria-label="Previous slide">&#8592;</button>
+        <div class="slider__dots" id="sliderDots"></div>
+        <span class="slider__counter"><span id="sliderCurrent">01</span> / {{ cities|length if cities else '6' }}</span>
+        <button class="slider__btn" id="sliderNext" aria-label="Next slide">&#8594;</button>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/slider.js') }}"></script>
+{% endblock %}

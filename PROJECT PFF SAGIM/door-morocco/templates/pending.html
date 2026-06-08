@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Account Under Review — Door Morocco{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <div class="auth__bg"></div>
+  <div class="auth__particles" id="authParticles"></div>
+
+  <div class="auth__card auth__card--pending">
+    <div class="auth__corner auth__corner--tl"></div>
+    <div class="auth__corner auth__corner--tr"></div>
+    <div class="auth__corner auth__corner--bl"></div>
+    <div class="auth__corner auth__corner--br"></div>
+
+    <div class="pending">
+      <!-- Animated hourglass icon -->
+      <div class="pending__icon">
+        <svg class="pending__svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="4" width="40" height="4" rx="2" fill="#D4AF37"/>
+          <rect x="12" y="56" width="40" height="4" rx="2" fill="#D4AF37"/>
+          <path d="M16 8 L16 20 L32 32 L48 20 L48 8" stroke="#D4AF37" stroke-width="2" fill="none"/>
+          <path d="M16 56 L16 44 L32 32 L48 44 L48 56" stroke="#D4AF37" stroke-width="2" fill="none"/>
+          <path class="pending__sand" d="M24 14 L32 22 L40 14" stroke="#D4AF37" stroke-width="1.5" fill="rgba(212,175,55,0.15)"/>
+          <path class="pending__sand-bottom" d="M24 50 L32 42 L40 50" stroke="#D4AF37" stroke-width="1.5" fill="rgba(212,175,55,0.3)"/>
+        </svg>
+      </div>
+
+      <h1 class="pending__title">Account Under Review</h1>
+      <div class="auth__divider"></div>
+
+      <p class="pending__greeting">
+        Welcome, <span class="pending__name">{{ user_name }}</span>
+      </p>
+
+      <p class="pending__message">
+        Your partner application has been received and is currently being reviewed
+        by our team. We ensure every partner meets our standards of excellence
+        before granting access to the platform.
+      </p>
+
+      <div class="pending__timeline">
+        <div class="pending__step pending__step--done">
+          <div class="pending__step-dot"></div>
+          <span>Application Submitted</span>
+        </div>
+        <div class="pending__step pending__step--active">
+          <div class="pending__step-dot"></div>
+          <span>Under Review</span>
+        </div>
+        <div class="pending__step">
+          <div class="pending__step-dot"></div>
+          <span>Account Approved</span>
+        </div>
+      </div>
+
+      <p class="pending__note">
+        You will be notified once your account has been approved.
+      </p>
+
+      <a href="{{ url_for('index') }}" class="auth__submit auth__submit--link">
+        <span class="auth__submit-text">Return Home</span>
+        <span class="auth__submit-arrow">&#8594;</span>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const pc = document.getElementById('authParticles');
+  if (pc) {
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'hero__particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = 6 + Math.random() * 6 + 's';
+      pc.appendChild(p);
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}{{ city.name }} — Door Morocco{% endblock %}
+{% block meta_description %}Discover luxury hotels and guided experiences in {{ city.name }}, Morocco. Curated by Door Morocco.{% endblock %}
+
+{% block content %}
+<!-- ═══════ CITY HERO BANNER ═══════ -->
+<section class="city-hero" id="cityHero">
+  <div class="city-hero__image" style="background-image: url('{{ city.image }}')"></div>
+  <div class="city-hero__overlay"></div>
+  <div class="city-hero__content">
+    <nav class="city-hero__breadcrumb">
+      <a href="{{ url_for('index') }}">Home</a>
+      <span class="city-hero__breadcrumb-sep">/</span>
+      <a href="{{ url_for('index') }}#cities">Destinations</a>
+      <span class="city-hero__breadcrumb-sep">/</span>
+      <span>{{ city.name }}</span>
+    </nav>
+    <h1 class="city-hero__title">{{ city.name }}</h1>
+    <p class="city-hero__desc">{{ city.description }}</p>
+    <div class="city-hero__stats">
+      <div class="city-hero__stat">
+        <span class="city-hero__stat-num">{{ hotels|length }}</span>
+        <span class="city-hero__stat-label">Hotels & Riads</span>
+      </div>
+      <div class="city-hero__stat-divider"></div>
+      <div class="city-hero__stat">
+        <span class="city-hero__stat-num">{{ guides|length }}</span>
+        <span class="city-hero__stat-label">Guides & Experiences</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="city-body">
+  <div class="city-body__main">
+
+    <!-- ═══════ HOTELS SECTION ═══════ -->
+    {% if hotels %}
+    <div class="city-category" id="hotels">
+      <div class="city-category__header">
+        <div class="city-category__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h2 class="city-category__title">Hotels & Riads</h2>
+        <div class="city-category__line"></div>
+      </div>
+
+      <div class="svc-grid">
+        {% for svc in hotels %}
+        <a href="{{ url_for('service_detail', service_id=svc.id) }}" class="svc-card" id="svc-{{ svc.id }}">
+          <div class="svc-card__image">
+            {% if svc.main_image %}
+              <img src="{{ svc.main_image }}" alt="{{ svc.title }}" loading="lazy">
+            {% else %}
+              <div class="svc-card__no-image">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="1">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+            {% endif %}
+            <span class="svc-card__badge">{{ svc.category|capitalize }}</span>
+          </div>
+          <div class="svc-card__body">
+            <h3 class="svc-card__title">{{ svc.title }}</h3>
+            <p class="svc-card__partner">by {{ svc.partner_name }}</p>
+            <p class="svc-card__desc">{{ svc.description[:100] }}{% if svc.description|length > 100 %}…{% endif %}</p>
+            {% if svc.min_price %}
+              <div class="svc-card__price">
+                <span class="svc-card__price-label">From</span>
+                <span class="svc-card__price-value">{{ "%.0f"|format(svc.min_price) }} MAD</span>
+              </div>
+            {% endif %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════ GUIDES SECTION ═══════ -->
+    {% if guides %}
+    <div class="city-category" id="guides">
+      <div class="city-category__header">
+        <div class="city-category__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+            <circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
+          </svg>
+        </div>
+        <h2 class="city-category__title">Guides & Experiences</h2>
+        <div class="city-category__line"></div>
+      </div>
+
+      <div class="svc-grid">
+        {% for svc in guides %}
+        <a href="{{ url_for('service_detail', service_id=svc.id) }}" class="svc-card" id="svc-{{ svc.id }}">
+          <div class="svc-card__image">
+            {% if svc.main_image %}
+              <img src="{{ svc.main_image }}" alt="{{ svc.title }}" loading="lazy">
+            {% else %}
+              <div class="svc-card__no-image">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="1">
+                  <circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
+                </svg>
+              </div>
+            {% endif %}
+            <span class="svc-card__badge">{{ svc.category|capitalize }}</span>
+          </div>
+          <div class="svc-card__body">
+            <h3 class="svc-card__title">{{ svc.title }}</h3>
+            <p class="svc-card__partner">by {{ svc.partner_name }}</p>
+            <p class="svc-card__desc">{{ svc.description[:100] }}{% if svc.description|length > 100 %}…{% endif %}</p>
+            {% if svc.min_price %}
+              <div class="svc-card__price">
+                <span class="svc-card__price-label">From</span>
+                <span class="svc-card__price-value">{{ "%.0f"|format(svc.min_price) }} MAD</span>
+              </div>
+            {% endif %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════ NO SERVICES ═══════ -->
+    {% if not services %}
+    <div class="city-empty">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="1">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <h3>No Services Available Yet</h3>
+      <p>We're curating the finest experiences in {{ city.name }}. Check back soon or <a href="{{ url_for('register') }}">become a partner</a> to list your services.</p>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="city-sidebar">
+    <div class="city-sidebar__block">
+      <h3 class="city-sidebar__title">Other Destinations</h3>
+      <ul class="city-sidebar__list">
+        {% for c in all_cities %}
+          <li class="city-sidebar__item {{ 'city-sidebar__item--active' if c.id == city.id }}">
+            <a href="{{ url_for('city_view', city_id=c.id) }}">{{ c.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="city-sidebar__block">
+      <h3 class="city-sidebar__title">Become a Partner</h3>
+      <p class="city-sidebar__text">List your hotel or experience on Door Morocco and reach luxury travelers worldwide.</p>
+      <a href="{{ url_for('register') }}" class="auth__submit auth__submit--link">
+        Join Us <span class="auth__submit-arrow">→</span>
+      </a>
+    </div>
+  </aside>
+</section>
+{% endblock %}

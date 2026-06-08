@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}{{ service.title }} — Door Morocco{% endblock %}
+{% block meta_description %}{{ service.description[:155] }} — Book through Door Morocco for the best rates in {{ service.city_name }}.{% endblock %}
+
+{% block content %}
+<!-- ═══════ SERVICE HERO ═══════ -->
+<section class="svc-hero">
+  <div class="svc-hero__image-wrap">
+    {% if service.main_image %}
+      <img class="svc-hero__image" src="{{ service.main_image }}" alt="{{ service.title }}">
+    {% else %}
+      <div class="svc-hero__placeholder">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,0.15)" stroke-width="0.8">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </div>
+    {% endif %}
+    <div class="svc-hero__overlay"></div>
+    <div class="svc-hero__top">
+      <nav class="city-hero__breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span class="city-hero__breadcrumb-sep">/</span>
+        <a href="{{ url_for('city_view', city_id=service.city_id) }}">{{ service.city_name }}</a>
+        <span class="city-hero__breadcrumb-sep">/</span>
+        <span>{{ service.title }}</span>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SERVICE CONTENT ═══════ -->
+<section class="svc-detail">
+  <div class="svc-detail__main">
+
+    <!-- Title & Meta -->
+    <div class="svc-detail__header">
+      <div class="svc-detail__badges">
+        <span class="service-item__badge service-item__badge--cat">{{ service.category|capitalize }}</span>
+        <span class="service-item__badge service-item__badge--live">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px"><polyline points="20 6 9 17 4 12"/></svg>
+          Verified
+        </span>
+      </div>
+      <h1 class="svc-detail__title">{{ service.title }}</h1>
+      <p class="svc-detail__location">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" style="vertical-align:-2px">
+          <circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
+        </svg>
+        {{ service.city_name }}, Morocco
+      </p>
+    </div>
+
+    <!-- Description -->
+    <div class="svc-detail__section">
+      <h2 class="svc-detail__section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        About This {{ service.category|capitalize }}
+      </h2>
+      <div class="svc-detail__desc">
+        {{ service.description }}
+      </div>
+    </div>
+
+    <!-- ═══════ AFFILIATE COMPARISON TABLE ═══════ -->
+    {% if links %}
+    <div class="svc-detail__section">
+      <h2 class="svc-detail__section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        Compare Prices
+      </h2>
+      <p class="svc-detail__section-sub">Find the best deal across trusted booking platforms.</p>
+
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Price</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for link in links %}
+            <tr class="{{ 'compare-table__best' if loop.first }}">
+              <td class="compare-table__site">
+                <span class="compare-table__site-name">{{ link.site_name }}</span>
+                {% if loop.first %}
+                  <span class="compare-table__best-badge">Best Price</span>
+                {% endif %}
+              </td>
+              <td class="compare-table__price">
+                <span class="compare-table__price-value">{{ "%.0f"|format(link.price_mad) }}</span>
+                <span class="compare-table__price-currency">MAD</span>
+              </td>
+              <td class="compare-table__action">
+                <a href="{{ link.url }}" target="_blank" rel="noopener" class="compare-table__book-btn">
+                  Book Now
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="svc-detail__sidebar">
+
+    <!-- Quick price card -->
+    {% if cheapest %}
+    <div class="price-card">
+      <div class="price-card__header">
+        <p class="price-card__label">Starting from</p>
+        <p class="price-card__amount">{{ "%.0f"|format(cheapest.price_mad) }} <span>MAD</span></p>
+      </div>
+      <a href="{{ cheapest.url }}" target="_blank" rel="noopener" class="price-card__btn">
+        Book on {{ cheapest.site_name }}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </a>
+      <p class="price-card__note">{{ links|length }} booking platform{{ 's' if links|length > 1 }} available</p>
+    </div>
+    {% endif %}
+
+    <!-- Contact Partner -->
+    <div class="contact-card">
+      <div class="contact-card__header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22 6 12 13 2 6"/>
+        </svg>
+        <h3 class="contact-card__title">Contact Partner</h3>
+      </div>
+      <div class="contact-card__partner">
+        <div class="contact-card__avatar">{{ service.partner_name[0]|upper }}</div>
+        <div>
+          <p class="contact-card__name">{{ service.partner_name }}</p>
+          <p class="contact-card__role">Verified Partner</p>
+        </div>
+      </div>
+      <a href="mailto:{{ service.partner_email }}?subject=Inquiry about {{ service.title }}" class="contact-card__btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22 6 12 13 2 6"/>
+        </svg>
+        Send Inquiry
+      </a>
+    </div>
+
+    <!-- Back to city -->
+    <a href="{{ url_for('city_view', city_id=service.city_id) }}" class="svc-detail__back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      All services in {{ service.city_name }}
+    </a>
+  </aside>
+</section>
+{% endblock %}

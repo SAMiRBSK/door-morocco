@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In — Door Morocco{% endblock %}
+{% block meta_description %}Sign in to your Door Morocco account to manage your luxury tourism services.{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <div class="auth__bg"></div>
+  <div class="auth__particles" id="authParticles"></div>
+
+  <div class="auth__card">
+    <div class="auth__corner auth__corner--tl"></div>
+    <div class="auth__corner auth__corner--tr"></div>
+    <div class="auth__corner auth__corner--bl"></div>
+    <div class="auth__corner auth__corner--br"></div>
+
+    <div class="auth__header">
+      <p class="auth__label">Welcome Back</p>
+      <h1 class="auth__title">Sign In</h1>
+      <div class="auth__divider"></div>
+    </div>
+
+    <form class="auth__form" method="POST" action="{{ url_for('login') }}" id="loginForm">
+      <div class="auth__field">
+        <label class="auth__field-label" for="email">Email Address</label>
+        <input
+          class="auth__input"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          value="{{ email|default('', true) }}"
+          required
+          autocomplete="email"
+        >
+        <div class="auth__input-line"></div>
+      </div>
+
+      <div class="auth__field">
+        <label class="auth__field-label" for="password">Password</label>
+        <input
+          class="auth__input"
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+          autocomplete="current-password"
+        >
+        <div class="auth__input-line"></div>
+      </div>
+
+      <button type="submit" class="auth__submit" id="loginSubmit">
+        <span class="auth__submit-text">Sign In</span>
+        <span class="auth__submit-arrow">&#8594;</span>
+      </button>
+    </form>
+
+    <p class="auth__footer-text">
+      Don&rsquo;t have an account?
+      <a href="{{ url_for('register') }}" class="auth__link">Register Now</a>
+    </p>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const pc = document.getElementById('authParticles');
+  if (pc) {
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'hero__particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = 6 + Math.random() * 6 + 's';
+      pc.appendChild(p);
+    }
+  }
+</script>
+{% endblock %}
