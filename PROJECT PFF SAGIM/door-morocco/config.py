@@ -26,7 +26,7 @@ class Config:
     MYSQL_PORT = int(os.getenv("MYSQL_PORT", 3306))
     MYSQL_USER = os.getenv("MYSQL_USER", "root")
     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
-    MYSQL_DB = os.getenv("MYSQL_DB", "door_morocco")
+    MYSQL_DB = os.getenv("MYSQL_DB", "doormorocco")
 
     # Uploads
     UPLOAD_FOLDER = os.path.join(

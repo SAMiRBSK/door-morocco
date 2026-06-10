@@ -1,5 +1,5 @@
 /**
- * Door Morocco — Dashboard Interactions
+ * Door Morocco — Dashboard Interaction
  * Image preview, dynamic affiliate links, form toggle.
  */
 document.addEventListener('DOMContentLoaded', () => {
