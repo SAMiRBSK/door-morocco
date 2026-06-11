@@ -27,6 +27,7 @@ class Config:
     MYSQL_USER = os.getenv("MYSQL_USER", "root")
     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
     MYSQL_DB = os.getenv("MYSQL_DB", "doormorocco")
+    MYSQL_CUSTOM_OPTIONS = {"ssl": {"ssl_mode": "REQUIRED"}}
 
     # Uploads
     UPLOAD_FOLDER = os.path.join(
