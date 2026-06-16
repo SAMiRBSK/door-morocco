@@ -330,11 +330,13 @@ def create_app(config_name: str | None = None) -> Flask:
             except Exception:
                 flash("Something went wrong. Please try again.", "error")
                 return render_template("register.html", name=name, email=email)
+            print(f"DEBUG: Password received: {password}")
 
             hashed = generate_password_hash(password)
             try:
         
                 cur.execute("""
+                            print("DEBUG: User inserted successfully")
     INSERT INTO user (name, email, password, role, status)
     VALUES (%s, %s, %s, 'partner', 'pending')""",
     (name, email, hashed),
