@@ -94,8 +94,10 @@ def create_app(config_name: str | None = None) -> Flask:
                      ssl_verify_cert=False,
                      ssl_verify_identity=False,
                 )
-            except Exception:
-                return None
+            except Exception as e:
+              app.logger.error(f"DB CONNECTION ERROR:{e}")
+            return None
+                
         return g.db
 
     def get_cursor():
