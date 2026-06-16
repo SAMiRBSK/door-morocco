@@ -377,7 +377,8 @@ def create_app(config_name: str | None = None) -> Flask:
 
                 flash("Your account has been created and is pending review.", "success")
                 return redirect(url_for("login"))
-            except Exception:
+            except Exception as e:
+                print(f"REGISTRATION ERROR: {e}", flush=True)
                 flash("Registration failed. Please try again.", "error")
                 return render_template("register.html", name=name, email=email)
 
