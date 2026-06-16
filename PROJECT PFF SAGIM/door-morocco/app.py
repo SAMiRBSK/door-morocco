@@ -328,7 +328,7 @@ def create_app(config_name: str | None = None) -> Flask:
                 return render_template("register.html", name=name, email=email)
 
             try:
-                cur.execute("SELECT id FROM user WHERE email = %s", (email,))
+                cur.execute("SELECT id FROM `user` WHERE email = %s", (email,))
                 if cur.fetchone():
                     flash("An account with this email already exists.", "error")
                     return render_template("register.html", name=name, email=email)
@@ -342,7 +342,7 @@ def create_app(config_name: str | None = None) -> Flask:
         
                 cur.execute("""
                             
-    INSERT INTO user (name, email, password, role, status)
+    INSERT INTO `user` (name, email, password, role, status)
     VALUES (%s, %s, %s, 'partner', 'pending')""",
     (name, email, hashed),
 )
@@ -401,7 +401,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
             try:
                 cur.execute(
-                    "SELECT id, name, email, password_hash, role, status FROM user WHERE email = %s",
+                    "SELECT id, name, email, password_hash, role, status FROM `user` WHERE email = %s",
                     (email,),
                 )
                 user = cur.fetchone()
@@ -611,7 +611,7 @@ def create_app(config_name: str | None = None) -> Flask:
                 # Pending partners
                 cur.execute("""
                     SELECT id, name, email, created_at
-                    FROM user
+                    FROM `user`
                     WHERE role = 'partner' AND status = 'pending'
                     ORDER BY created_at DESC
                 """)
@@ -667,8 +667,8 @@ def create_app(config_name: str | None = None) -> Flask:
             flash("Database unavailable.", "error")
             return redirect(url_for("admin_panel"))
         try:
-            cur.execute("UPDATE user SET status = 'approved' WHERE id = %s AND role = 'partner'", (user_id,))
-            cur.execute("SELECT name, email FROM user WHERE id = %s", (user_id,))
+            cur.execute("UPDATE `user` SET status = 'approved' WHERE id = %s AND role = 'partner'", (user_id,))
+            cur.execute("SELECT name, email FROM `user` WHERE id = %s", (user_id,))
             u = cur.fetchone()
             get_db().commit()
             cur.close()
@@ -688,7 +688,7 @@ def create_app(config_name: str | None = None) -> Flask:
             flash("Database unavailable.", "error")
             return redirect(url_for("admin_panel"))
         try:
-            cur.execute("DELETE FROM user WHERE id = %s AND role = 'partner' AND status = 'pending'", (user_id,))
+            cur.execute("DELETE FROM `user` WHERE id = %s AND role = 'partner' AND status = 'pending'", (user_id,))
             get_db().commit()
             cur.close()
             create_notification("partner_rejected", "Partner application rejected",
