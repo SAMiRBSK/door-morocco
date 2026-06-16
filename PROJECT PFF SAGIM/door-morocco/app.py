@@ -25,7 +25,7 @@ from flask import (
     Flask, render_template, g, jsonify,
     request, redirect, url_for, session, flash,
 )
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password, check_password
 from werkzeug.utils import secure_filename
 from config import config_by_name
 
@@ -337,7 +337,7 @@ def create_app(config_name: str | None = None) -> Flask:
                 return render_template("register.html", name=name, email=email)
             
 
-            hashed = generate_password_hash(password)
+            hashed = generate_password(password)
             try:
         
                 cur.execute("""
@@ -401,7 +401,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
             try:
                 cur.execute(
-                    "SELECT id, name, email, password_hash, role, status FROM `user` WHERE email = %s",
+                    "SELECT id, name, email, password, role, status FROM `user` WHERE email = %s",
                     (email,),
                 )
                 user = cur.fetchone()
@@ -410,7 +410,7 @@ def create_app(config_name: str | None = None) -> Flask:
                 flash("Something went wrong. Please try again.", "error")
                 return render_template("login.html", email=email)
 
-            if not user or not check_password_hash(user["password_hash"], password):
+            if not user or not check_password(user["password"], password):
                 flash("Invalid email or password.", "error")
                 return render_template("login.html", email=email)
 
