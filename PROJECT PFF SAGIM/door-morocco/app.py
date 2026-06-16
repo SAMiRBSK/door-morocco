@@ -95,13 +95,14 @@ def create_app(config_name: str | None = None) -> Flask:
                      ssl_verify_identity=False,
                 )
             except Exception as e:
-              app.logger.error(f"DB CONNECTION ERROR:{e}")
-            return None
+             print(f"DB CONNECTION ERROR: {e}", flush=True)
+    return None
+              
                 
         return g.db
 
     def get_cursor():
-        """Return a dictionary cursor from the current connection."""
+        """Return a dictionary cursor from the current connection."""     
         db = get_db()
         if db is None:
             return None
