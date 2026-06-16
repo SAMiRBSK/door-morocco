@@ -84,12 +84,15 @@ def create_app(config_name: str | None = None) -> Flask:
         if "db" not in g:
             try:
                 g.db = mysql.connector.connect(
-                    host=app.config["MYSQL_HOST"],
-                    port=app.config["MYSQL_PORT"],
-                    user=app.config["MYSQL_USER"],
-                    password=app.config["MYSQL_PASSWORD"],
-                    database=app.config["MYSQL_DB"],
-                    charset="utf8mb4",
+                     host=app.config["MYSQL_HOST"],
+                     port=app.config["MYSQL_PORT"],
+                     user=app.config["MYSQL_USER"],
+                     password=app.config["MYSQL_PASSWORD"],
+                     database=app.config["MYSQL_DB"],
+                     charset="utf8mb4",
+                     ssl_disabled=False,
+                     ssl_verify_cert=False,
+                     ssl_verify_identity=False,
                 )
             except Exception:
                 return None
