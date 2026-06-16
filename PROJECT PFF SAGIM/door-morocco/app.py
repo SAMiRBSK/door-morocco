@@ -333,11 +333,12 @@ def create_app(config_name: str | None = None) -> Flask:
 
             hashed = generate_password_hash(password)
             try:
-                cur.execute(
-                    """INSERT INTO user (username, name, email, password_hash, role, status)
-                       VALUES (%s, %s, %s, %s, 'partner', 'pending')""",
-                    (name, name, email, hashed),
-                )
+        
+                cur.execute("""
+    INSERT INTO user (name, email, password, role, status)
+    VALUES (%s, %s, %s, 'partner', 'pending')""",
+    (name, email, hashed),
+)
                 get_db().commit()
                 new_id = cur.lastrowid
                 cur.close()
