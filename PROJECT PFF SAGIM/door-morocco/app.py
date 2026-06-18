@@ -118,7 +118,7 @@ def create_app(config_name: str | None = None) -> Flask:
                    VALUES (%s, %s, %s, %s)""",
                 (ntype, title, message, ref_id),
             )
-            get_db().commit()
+            g.db.commit()
         except Exception:
             pass
 
@@ -559,7 +559,7 @@ def create_app(config_name: str | None = None) -> Flask:
                         VALUES (%s, %s, %s, %s)
                     """, (service_id, sn, pv, su))
 
-            get_db().commit()
+            g.db.commit()
             cur.close()
 
             # Notification for admin
@@ -587,7 +587,7 @@ def create_app(config_name: str | None = None) -> Flask:
         try:
             cur.execute("DELETE FROM services WHERE id = %s AND partner_id = %s",
                         (service_id, partner_id))
-            get_db().commit()
+            g.db.commit()
             cur.close()
             flash("Service has been removed.", "info")
         except Exception:
@@ -671,7 +671,7 @@ def create_app(config_name: str | None = None) -> Flask:
             cur.execute("UPDATE `user` SET status = 'approved' WHERE id = %s AND role = 'partner'", (user_id,))
             cur.execute("SELECT name, email FROM `user` WHERE id = %s", (user_id,))
             u = cur.fetchone()
-            get_db().commit()
+            g.db.commit()
             cur.close()
             if u:
                 create_notification("partner_approved", f"Partner approved: {u['name']}",
@@ -690,7 +690,7 @@ def create_app(config_name: str | None = None) -> Flask:
             return redirect(url_for("admin_panel"))
         try:
             cur.execute("DELETE FROM `user` WHERE id = %s AND role = 'partner' AND status = 'pending'", (user_id,))
-            get_db().commit()
+            g.db.commit()
             cur.close()
             create_notification("partner_rejected", "Partner application rejected",
                                 f"A pending partner application (ID: {user_id}) was rejected.", user_id)
@@ -711,7 +711,7 @@ def create_app(config_name: str | None = None) -> Flask:
             cur.execute("UPDATE services SET verified_status = TRUE WHERE id = %s", (service_id,))
             cur.execute("SELECT title FROM services WHERE id = %s", (service_id,))
             s = cur.fetchone()
-            get_db().commit()
+            g.db.commit()
             cur.close()
             if s:
                 create_notification("service_approved", f"Service approved: {s['title']}",
@@ -732,7 +732,7 @@ def create_app(config_name: str | None = None) -> Flask:
             cur.execute("SELECT title FROM services WHERE id = %s", (service_id,))
             s = cur.fetchone()
             cur.execute("DELETE FROM services WHERE id = %s", (service_id,))
-            get_db().commit()
+            g.db.commit()
             cur.close()
             title = s["title"] if s else "Unknown"
             create_notification("service_rejected", f"Service rejected: {title}",
@@ -750,7 +750,7 @@ def create_app(config_name: str | None = None) -> Flask:
         if cur is not None:
             try:
                 cur.execute("UPDATE notifications SET is_read = TRUE WHERE is_read = FALSE")
-                get_db().commit()
+                g.db.commit()
                 cur.close()
             except Exception:
                 pass
