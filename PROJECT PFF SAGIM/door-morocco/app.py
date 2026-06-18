@@ -346,9 +346,7 @@ def create_app(config_name: str | None = None) -> Flask:
     VALUES (%s, %s, %s, 'partner', 'pending')""",
     (name, email, hashed),
 )
-                db = get_db()
-                if db:
-                    db.commit()
+                g.db.commit()    
                 new_id = cur.lastrowid
                 cur.close()
 
